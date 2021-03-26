@@ -267,7 +267,7 @@
 		$.get({
 			url: '/sortItemBestByTag?tag=' + tag,
 			success: function (data) {
-
+                console.log();
 				$("#popSort_itemList").empty();
 				$("#popSort_searchDiv").empty();
 
