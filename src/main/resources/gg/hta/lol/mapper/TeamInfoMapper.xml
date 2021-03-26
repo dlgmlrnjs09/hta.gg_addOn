@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gg.hta.lol.mapper.TeamInfoMapper">
+	<insert id="addTeaminfo">
+		insert into teaminfo(teamId,matchId,winlose,firstBlood,firstTower,baronKill,dragonKill,towerKill) 
+			select i.*
+			from(
+				<foreach collection="list" item="item" separator="union all ">
+					select #{item.teamId} as teamId,
+					#{item.matchId} as matchId,
+					#{item.winlose} as winlose,
+					#{item.firstBlood} as firstBlood,
+					#{item.firstTower} as firstTower,
+					#{item.baronKill} as baronKill,
+					#{item.dragonKill} as dragonKill,
+					#{item.towerKill} as towerKill
+					from dual
+				</foreach>
+			)i
+<!-- 		values(#{teamId},#{matchId},#{winlose},#{firstBlood},#{firstTower},#{baronKill},#{dragonKill},#{towerKill}) -->
+	</insert>
+	
+
+</mapper>

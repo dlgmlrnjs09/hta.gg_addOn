@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gg.hta.lol.mapper.SummonerMapper">
+	<insert id="addSummoner" >
+		insert into summoner values(#{snickname},#{slevel},#{icon})
+	</insert>
+	
+	<insert id="addSummonerList" >
+		insert into summoner(snickname,slevel,icon)
+			select i.*
+			from(
+				<foreach collection="list" item="item" separator="union all ">
+					select #{item.snickname} as snickname,#{item.slevel} as slevel,#{item.icon} as icon
+					from dual
+				</foreach>
+			)i
+	</insert>
+	
+	<select id="getSummoner" parameterType="String" resultType="gg.hta.lol.vo.SummonerVo">
+		select * from summoner where sNickName =  #{nickname}
+	</select>
+	
+	<update id="updateSummoner">
+		update summoner set slevel = #{slevel},icon=#{icon} where snickname = #{snickname}
+	</update>
+	
+	<select id="getSummonerInfo" resultMap="SearchMap">
+		select s.snickname,slevel,icon,queuetype,tier,leaguepoints,win,lose
+		from summoner s, queueinfo q
+		where s.snickname = q.snickname
+		and s.snickname = #{name}
+	</select>
+	
+	<resultMap type="gg.hta.lol.vo.match.SearchVo" id="SearchMap">
+		<result property="snickname" column="SNICKNAME"/>
+		<result property="slevel" column="SLEVEL"/>
+		<result property="icon" column="ICON"/>
+		<collection property="qiList" resultMap="queueInfoMap">
+		</collection>
+	</resultMap>
+	
+	<resultMap type="gg.hta.lol.vo.QueueInfoVo" id="queueInfoMap">
+		<result property="queueType" column="QUEUETYPE"/>
+		<result property="tier" column="TIER"/>
+		<result property="win" column="WIN"/>
+		<result property="lose" column="LOSE"/>
+		<result property="leaguePoints" column="leaguePoints"/>
+	</resultMap>
+	 
+	<select id="getChampLog" resultType="gg.hta.lol.vo.match.MostChampVo">
+		select picture,name,championid,"kill","death","assist","cs",cnt
+		from(
+		select rownum rn, m.picture,m.championid ,m.name,m."kill",m."death",m."assist",m."cs",m.cnt
+		from view_mostchampion m
+		where m.snickname=#{snickname}
+		order by cnt desc
+		)
+		<![CDATA[where rn<=5]]>
+	</select>
+	
+	<select id="getChampWinCnt" resultType="gg.hta.lol.vo.match.WinCountVo" >
+		
+		select name,wincnt
+		from view_summon_champ_odds 
+		where snickname = #{snickname}
+		<foreach collection="list" index="index" open="and name in (" close=")" item="item" separator=",">
+			#{item.name}
+		</foreach>
+	</select>
+	
+	
+</mapper>

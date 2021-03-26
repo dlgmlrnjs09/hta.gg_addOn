@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gg.hta.lol.mapper.RatingMapper">
+	<select id="getRatingAvg" parameterType="String" resultType="double">
+		select nvl(avg(rate),0)
+		from rating
+		where snickname = #{snickname}
+	</select>
+	
+	<insert id="addRating" parameterType="hashmap">
+		insert into rating values(#{snickname},#{rate})
+	</insert>
+	
+	<select id="getRatingCnt" parameterType="String" resultType="int">
+		select count(*)
+		from rating
+		where snickname = #{snickname}
+	</select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="gg.hta.lol.mapper.MatchMoreJoinMapper">
+	<select id="getMatchInfoList" parameterType="hashmap" resultType="gg.hta.lol.joinvo.MatchMoreJoinVo">
+		select *
+		from teaminfo t, teammemberinfo tm
+		where t.teamid = tm.teamid and t.matchid = tm.matchid and tm.matchid= #{matchid}
+<!-- 		select * -->
+<!-- 		from teaminfo t, teammemberinfo tm, summoner s, queueinfo q -->
+<!-- 		where t.teamid = tm.teamid and tm.snickname = s.snickname -->
+<!-- 		and t.matchid = tm.matchid and t.matchid= #{matchid} -->
+<!-- 		and s.snickname = q.snickname  -->
+<!--		and q.queuetype = #{type} -->
+	</select>
+	
+	<select id="getMatchInfoLastThree" parameterType="String" resultType="gg.hta.lol.joinvo.MatchMoreJoinVo">
+		<![CDATA[
+		select *
+		from 
+		(
+		    select tt.*, rownum rnum
+		    FROM
+		    (
+		        select ti.winlose, tm.*
+		        from teaminfo ti, teammemberinfo tm
+		        where snickname = #{snickname}
+		        and ti.teamid = tm.teamid
+		        and ti.matchid = tm.matchid
+		    ) tt
+		)
+		where rnum <= 3
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,342 @@
+---------- drop sequence -------------
+drop SEQUENCE msgNum_seq;
+drop SEQUENCE tNum_seq;
+drop SEQUENCE mNum_seq;
+drop SEQUENCE bNum_seq; 
+drop SEQUENCE sNum_seq;
+drop SEQUENCE fileNum_seq;
+drop SEQUENCE rNum_seq; 
+drop SEQUENCE reNum_seq; 
+drop SEQUENCE pNum_seq;
+drop SEQUENCE tmNum_seq;
+drop SEQUENCE iNum_seq;
+drop SEQUENCE banNum_seq;
+drop SEQUENCE ptNum_seq;
+drop SEQUENCE scNum_seq;
+
+---------- drop table ---------- 
+drop table visitLog;
+drop table authorities;
+drop table message;
+drop table battingLog;
+drop table match;
+drop table battingTeamInfo;
+drop table rating;
+drop table reply;
+drop table Addfile;
+drop table report;
+drop table community;
+drop table persistent_logins;
+drop table point;
+drop table member;
+drop table auth;
+drop table banList;
+drop table teamMemberinfo;
+drop table teaminfo;
+drop table matchinfo;
+drop table queueinfo;
+drop table Summoner;
+drop table champion;
+drop table item;
+drop table scrap;
+
+---------- create table ---------- 
+create table visitLog
+(
+	vDate date not null
+);
+
+create table summoner
+(
+	sNickname varchar2(255)PRIMARY KEY,	
+	sLevel number,	
+	icon varchar2(255)	
+);
+
+CREATE TABLE queueinfo
+(
+	snickname varchar2(255) references summoner,
+	queueType varchar2(30) ,
+	tier varchar2(15),
+	leaguePoints number,
+	win number,
+	lose number,
+	PRIMARY KEY (snickname, queueType)
+);
+
+create table auth
+(
+	username varchar2(50) primary key,	
+	code varchar2(1000)	
+);
+
+create table member
+(
+	username varchar2(50) NOT NULL enable,	
+	snickname varchar2(255) references summoner,	
+	password varchar2(100) not null,
+	ENABLED CHAR(1) DEFAULT 1 CHECK(ENABLED='0' OR ENABLED='1') NOT NULL,
+	email varchar2(50),	
+	regdate date,	
+	nickname varchar2(50),	
+	point number,
+    CONSTRAINT "member_PK" PRIMARY KEY ("USERNAME"),
+    CONSTRAINT "member_FK1" FOREIGN KEY ("USERNAME") REFERENCES "FINAL"."AUTH" ("USERNAME")
+);
+
+CREATE TABLE persistent_logins 
+(
+	series varchar(64) primary key,
+	username varchar(50) references member(username),
+	token varchar(64) DEFAULT NULL,
+	last_used timestamp not null
+);
+
+create table point
+(
+	ptNum number primary key,
+	username varchar2(50) references member(username) NOT NULL,
+	method varchar2(100) NOT NULL,
+	score number NOT NULL,
+	regdate date 
+);
+
+create table rating
+(
+	snickname varchar2(255) references summoner,
+	rate varchar2(100) 
+);
+
+create table message
+(
+	msgNum number primary key,
+	sender varchar2(50) references member(username),
+	receiver varchar2(50) references member(username),
+	msg varchar2(4000),	
+	sendTime date,	
+	open varchar2(255) 
+);
+
+create table authorities
+(
+	username varchar2(50) not null,
+	authority varchar2(100) not null, 
+	constraint fk_authorities_users  foreign key(username) references member(username)
+);
+create unique index ix_auth_username on authorities (username,authority);	
+
+create table battingTeamInfo
+(
+	tNum number primary key,	
+	tName varchar2(255)	
+);
+
+create table match
+(
+	mNum number primary key,
+	mDate date,
+	mRate number,
+	mWinlose number,
+    tNum1 number references battingTeamInfo(tnum) not null,
+    tNum2 number references battingTeamInfo(tnum) not null,
+    point number
+);
+
+create table battingLog
+(
+	bNum number primary key,	
+	mNum number references match(mNum) not null,	
+	username varchar2(50) references member(username) not null,
+	choice number	
+);
+
+create table community
+(
+	pNum number primary key,
+	username varchar2(50) references member(username) not null,	
+	cNum number not null,	
+	title varchar2(255),	
+	content varchar2(4000),	
+	hit number,		
+	nohit number,	
+	viewCount number,	
+	commentCount number, 
+	regdate date 
+);
+
+create table report
+(
+	rNum number primary key,
+	pNum number references community(pNum) not null,
+	username varchar(50) references member(username) not null,
+	detail varchar2(4000)
+);
+
+create table Addfile
+(
+	fileNum number primary key,
+	pNum number references community(pNum) not null,
+	orgPath varchar2(2000),
+	realPath varchar2(1000)
+);
+
+create table reply
+(
+	rNum number primary key,
+	pNum number references community(pNum) on delete cascade not null,	
+	rereNum number,	
+	rWriter varchar2(255),	
+	rContent varchar2(255),	
+	regdate date
+);
+
+create table item
+(
+	iNum number primary key,
+	icon varchar2(255),	
+	name varchar2(255),	
+	price number,
+	effect varchar2(4000),
+	tags varchar2(100)
+);
+
+create table champion
+(
+	championid varchar2(255) primary key,
+	name varchar2(255),
+	pickCount number,	
+	banCount number,	
+	winCount number,	
+	loseCount number,	
+	picture varchar2(255),	
+	skillP_icon varchar2(255),	
+	skillP_info varchar2(4000),	
+	skillQ_icon varchar2(255),	
+	skillQ_info varchar2(4000),	
+	skillW_icon varchar2(255),	
+	skillW_info varchar2(4000),	
+	skillE_icon varchar2(255),
+	skillE_info varchar2(4000),
+	skillR_icon varchar2(255),
+	skillR_info varchar2(4000),
+	story varchar2(4000),
+	tip varchar2(4000)
+);
+
+create table matchinfo
+(
+	matchid varchar2(255) primary key,
+	type varchar2(255),
+	runtime varchar2(255),
+	startTime date
+);
+
+CREATE TABLE "TEAMINFO" 
+(   
+	"TEAMID" VARCHAR2(255 BYTE) NOT NULL ENABLE,
+    "MATCHID" VARCHAR2(255 BYTE) NOT NULL ENABLE,
+    "WINLOSE" VARCHAR2(255 BYTE),
+    "FIRSTBLOOD" VARCHAR2(255 BYTE),
+    "FIRSTTOWER" VARCHAR2(255 BYTE),
+    "BARONKILL" NUMBER,
+    "DRAGONKILL" NUMBER,
+    "TOWERKILL" NUMBER,
+    CONSTRAINT "TEAMINFO_PK" PRIMARY KEY ("TEAMID", "MATCHID"),
+    CONSTRAINT "TEAMINFO_FK1" FOREIGN KEY ("MATCHID") REFERENCES "FINAL"."MATCHINFO" ("MATCHID")
+);
+
+CREATE TABLE TEAMMEMBERINFO
+(   
+	"TMNUM" NUMBER, 
+    snickname varchar2(255) references summoner,
+    "TEAMID" VARCHAR2(255 BYTE), 
+    "MATCHID" VARCHAR2(2555 BYTE), 
+    "CHAMPIONID" VARCHAR2(255 BYTE), 
+    "KILL" NUMBER, 
+    "DEATH" NUMBER, 
+    "ASSIST" NUMBER, 
+    "CHAMPIONLEVEL" NUMBER, 
+    "SPELL1" NUMBER, 
+    "SPELL2" NUMBER, 
+    "RUNE1" NUMBER, 
+    "RUNE2" NUMBER, 
+    "CHAMPIONDAMAGE" NUMBER, 
+    "TAKENDAMAGE" NUMBER, 
+    "CS" NUMBER, 
+    "WARDINSTALL" NUMBER, 
+    "WARDREMOVE" NUMBER, 
+    "GOLD" NUMBER, 
+    "ITEM1" NUMBER, 
+    "ITEM2" NUMBER, 
+    "ITEM3" NUMBER, 
+    "ITEM4" NUMBER, 
+    "ITEM5" NUMBER, 
+    "ITEM6" NUMBER, 
+    "ACCESSORY" NUMBER, 
+    "MULTIKILL" NUMBER, 
+    PRIMARY KEY ("TMNUM"),
+    CONSTRAINT "TEAMMEMBERINFO_FK2" FOREIGN KEY ("TEAMID", "MATCHID")
+    REFERENCES "FINAL"."TEAMINFO" ("TEAMID", "MATCHID") ENABLE, 
+    CONSTRAINT "TEAMMEMBERINFO_FK3" FOREIGN KEY ("CHAMPIONID")
+    REFERENCES "FINAL"."CHAMPION" ("CHAMPIONID") ENABLE, 
+    CONSTRAINT "TEAMMEMBERINFO_FK4" FOREIGN KEY ("ITEM1")
+    REFERENCES "FINAL"."ITEM" ("INUM") ENABLE, 
+    CONSTRAINT "TEAMMEMBERINFO_FK5" FOREIGN KEY ("ITEM2")
+    REFERENCES "FINAL"."ITEM" ("INUM") ENABLE, 
+    CONSTRAINT "TEAMMEMBERINFO_FK6" FOREIGN KEY ("ITEM3")
+    REFERENCES "FINAL"."ITEM" ("INUM") ENABLE, 
+    CONSTRAINT "TEAMMEMBERINFO_FK7" FOREIGN KEY ("ITEM4")
+    REFERENCES "FINAL"."ITEM" ("INUM") ENABLE, 
+    CONSTRAINT "TEAMMEMBERINFO_FK8" FOREIGN KEY ("ITEM5")
+    REFERENCES "FINAL"."ITEM" ("INUM") ENABLE, 
+    CONSTRAINT "TEAMMEMBERINFO_FK9" FOREIGN KEY ("ITEM6")
+    REFERENCES "FINAL"."ITEM" ("INUM") ENABLE
+);
+
+create table banList
+(
+	bNum number primary key,
+	championid	varchar2(255) references champion(championid)
+);
+
+CREATE TABLE "FINAL"."SCRAP" 
+   (	"SNUM" NUMBER NOT NULL ENABLE, 
+	"PNUM" NUMBER, 
+	"USERNAME" VARCHAR2(50 BYTE), 
+	 CONSTRAINT "SCRAP_PK" PRIMARY KEY ("SNUM")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "SYSTEM"  ENABLE, 
+	 CONSTRAINT "SCRAP_FK1" FOREIGN KEY ("USERNAME")
+	  REFERENCES "FINAL"."MEMBER" ("USERNAME") ENABLE, 
+	 CONSTRAINT "SCRAP_FK2" FOREIGN KEY ("PNUM")
+	  REFERENCES "FINAL"."COMMUNITY" ("PNUM") ENABLE
+   ) SEGMENT CREATION IMMEDIATE 
+  PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "SYSTEM" ;
+
+
+
+ALTER TABLE community ADD (test CLOB);
+UPDATE community SET test = content;
+ALTER TABLE community DROP COLUMN content; 
+ALTER TABLE community RENAME COLUMN test TO content;
+ALTER TABLE match ADD point number;
+---------- create sequence -----------
+create SEQUENCE msgNum_seq;
+create SEQUENCE tNum_seq;
+create SEQUENCE mNum_seq;
+create SEQUENCE bNum_seq;
+create SEQUENCE sNum_seq;
+create SEQUENCE fileNum_seq;
+create SEQUENCE rNum_seq;
+create SEQUENCE reNum_seq;
+create SEQUENCE pNum_seq;
+create SEQUENCE tmNum_seq;
+create SEQUENCE iNum_seq;
+create SEQUENCE banNum_seq;
+create SEQUENCE ptNum_seq;
+create SEQUENCE scNum_seq;

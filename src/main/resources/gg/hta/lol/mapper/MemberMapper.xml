@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gg.hta.lol.mapper.MemberMapper">
+	<resultMap type="gg.hta.lol.security.CustomUserDetail" id="userDetail">
+		<id property="username" column="username"/>
+		<result property="password" column="password"/>
+		<result property="enabled" column="enabled"/>
+		<collection property="authoList" ofType="gg.hta.lol.vo.AuthoritiesVo">
+			<result property="username" column="username"/>
+			<result property="authority" column="authority"/>
+		</collection>
+	</resultMap>
+	<select id="getAuths" parameterType="string" resultMap="userDetail">
+		select * from member m, authorities a
+		where m.username=a.username and m.username=#{username}
+	</select>
+	<insert id="auth_add" parameterType="gg.hta.lol.vo.AuthoritiesVo">
+		insert into authorities values(#{username},#{authority})
+	</insert>
+	<insert id="code_add" parameterType="gg.hta.lol.vo.AuthVo">
+		insert into auth values(#{username},#{code})
+	</insert>
+	<insert id="insert" parameterType="member">
+	   insert into member values(#{username},null,#{password},'1',#{email},sysdate,#{nickname},0)
+	</insert>
+	<update id="updatePwd" parameterType="hashmap">
+		update member
+		set password=#{password}
+		where username=#{username} and enabled = 1
+	</update>
+	<select id="select" parameterType="string" resultType="member">
+		select * from member where username=#{username}
+	</select>
+	<select id="Emailselect" parameterType="string" resultType="member">
+		select * from member where email=#{email} and enabled = 1
+	</select>
+	<delete id="AuthDelete" parameterType="string">
+		delete from auth where username = #{username}
+	</delete>
+	<select id="AuthSelect" parameterType="string" resultType="gg.hta.lol.vo.AuthVo">
+		select * from auth where username = #{username} 
+	</select>
+	<update id="AuthUpdate" parameterType="gg.hta.lol.vo.AuthVo">
+		update auth
+		set code=#{code}
+		where username=#{username}
+	</update>
+	<select id="EmailAuthSelect" parameterType="string" resultType="gg.hta.lol.vo.AuthVo">
+		select * from auth 
+		where username =  (select username from member where email = #{email} and enabled = 1)
+	</select>
+	<select id="PwdEmailselect" parameterType="hashmap" resultType="member">
+		select * from member where username=#{username} and email=#{email} and enabled = 1
+	</select>
+	<update id="update" parameterType="member">
+		update member
+		set nickname=#{nickname}, password=#{password}, email=#{email}
+		where username=#{username}
+	</update>
+	<update id="delete" parameterType="string">
+		update member
+		set enabled=0
+		where username=#{username}
+	</update>
+	<sql id="search">
+		where enabled=1
+		<if test="field != null and field!=''">
+			and ${field} like '%'||#{keyword}||'%'
+		</if>
+	</sql>
+	<select id="count" resultType="int" parameterType="hashmap">
+		select NVL(count(*),0) cnt from member
+		<include refid="search"/>
+	</select>
+	<select id="list" resultType="member" parameterType="hashmap">
+	 select * from
+	 (
+	   select a.*,rownum rnum from
+	   (
+		   select * from member
+		   <include refid="search"/>
+		   order by regdate desc
+	   )a
+	 )
+	 <![CDATA[ where rnum>=#{startRow} and rnum<=#{endRow} ]]>
+	</select>	
+	<select id="pointListCount" parameterType="string" resultType="int">
+		select NVL(count(*),0) cnt from point where username=#{username}
+	</select>
+	<select id="pointPlusListCount" parameterType="string" resultType="int">
+		select NVL(count(*),0) cnt from point where username=#{username} and  <![CDATA[ score > 0 ]]>
+	</select>
+	<select id="pointMinusListCount" parameterType="string" resultType="int">
+		select NVL(count(*),0) cnt from point where username=#{username} and <![CDATA[ score < 0 ]]>
+	</select>
+	<select id="pointList" parameterType="hashmap" resultType="gg.hta.lol.vo.PointVo">
+		select * from
+	 	(
+			select a.*,rownum rnum from
+		    (
+				select * from point where username=#{username}
+				<if test="score == 1">
+					and <![CDATA[ score > 0 ]]>
+				</if>
+				<if test="score == -1">
+					and <![CDATA[ score < 0 ]]>
+				</if>
+				order by regdate desc
+			)a
+		)
+		<![CDATA[ where rnum>=#{startRow} and rnum<=#{endRow} ]]>
+	</select>
+	<select id="reportListCount" resultType="int">
+		select NVL(count(*),0) cnt from report
+	</select>
+	<select id="reportList" parameterType="hashmap" resultType="gg.hta.lol.vo.ReportVo">
+		 select * from
+		 (
+		   select a.*,rownum rwnum from
+		   (
+			   select * from report
+			   order by rNum desc
+		   )a
+		 )
+		 <![CDATA[ where rwnum>=#{startRow} and rwnum<=#{endRow} ]]>
+	</select>
+	<select id="messageListCount" parameterType="string" resultType="int">
+		select NVL(count(*),0) cnt from message where receiver = #{username}
+	</select>
+	<select id="messageList" parameterType="hashmap" resultType="gg.hta.lol.vo.MessageVo">
+		select * from
+		 (
+		   select a.*,rownum rnum from
+		   (
+			   select * from message
+			   where receiver = #{username}
+			   order by msgNum desc
+		   )a
+		 )
+		 <![CDATA[ where rnum>=#{startRow} and rnum<=#{endRow} ]]>
+	</select>
+	<select id="scrapListCount" parameterType="string" resultType="int">
+		select NVL(count(*),0) cnt from scrap where username = #{username}
+	</select>
+	<select id="scrapList" parameterType="hashmap" resultType="gg.hta.lol.vo.CommunityVo">
+		select * from
+		 (
+		   select a.*,rownum rnum from
+		   (
+			   select * from community where pNum In
+			   (
+			   		select pNUm from scrap where username = #{username}
+			   )
+		   )a
+		 )
+		 <![CDATA[ where rnum>=#{startRow} and rnum<=#{endRow} ]]>
+	</select>
+	
+	<update id="updateSnickname" parameterType="hashmap">
+		update member
+		set snickname = #{snickname}
+		where username = #{username}
+	</update>
+</mapper>

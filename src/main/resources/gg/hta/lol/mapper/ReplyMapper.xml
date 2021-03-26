@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gg.hta.lol.mapper.ReplyMapper">
+	<select id="list" parameterType="int" resultType="reply">
+	 	select * from reply where pNum=#{pNum} and rerenum = 0
+	</select>
+	
+	<select id="rereList" parameterType="int" resultType="reply">
+	select *
+	from reply
+	where rerenum = #{rNum}
+	</select>
+	
+	<insert id="insert" parameterType="reply">
+	 	insert into reply values(reNum_seq.nextval,#{pNum},0,#{rWriter},#{rContent},sysdate,0,0)
+	</insert>
+	
+		<insert id="reInsert" parameterType="reply">
+	 	insert into reply values(reNum_seq.nextval,#{pNum},#{rereNum},#{rWriter},#{rContent},sysdate,0,0)
+	</insert>
+	
+	<delete id="replyDelete" parameterType="int">
+		delete from reply where rNum=#{rNum}
+	</delete>
+	
+	<delete id="rereDelete" parameterType="int">
+		delete from reply where rerenum=#{rNum}
+	</delete>
+	
+	<update id="pCount" parameterType="int">
+		update community set commentCount=commentCount+1 where pNum=#{pNum}
+	</update>
+	
+	<update id="mCount" parameterType="int">
+		update community set commentCount=(select count(*)from reply where pnum = #{pNum} ) where pNum=#{pNum}
+	</update>
+	
+	<update id="rpCount" parameterType="int">
+		update reply set rHit=rHit+1 where rNum=#{rNum}
+	</update>
+	
+	<select id="rHitCount" resultType="int" parameterType="int">
+		select count(rhit)
+		from reply
+		where rNum = #{rNum}
+	</select>
+	
+	<update id="rnpCount" parameterType="int">
+		update reply set rNohit=rNohit+1 where rNum=#{rNum}
+	</update>
+	
+	<select id="rNohitCount" resultType="int" parameterType="int">
+		select count(rNohit)
+		from reply
+		where rNum = #{rNum}
+	</select>
+	
+	<select id="replyCount" resultType="int" parameterType="string">
+		select NVL(count(*),0) cnt from reply where rwriter=#{username}
+	</select>
+	
+	<select id="replyList" parameterType="hashmap" resultType="reply">
+		select * from
+		 (
+		   select a.*,rownum rwnum from
+		   (
+			  select * from reply where rwriter=#{username}
+			   order by regdate desc
+		   )a
+		 )
+		<![CDATA[ where rwnum>=#{startRow} and rwnum<=#{endRow}  ]]>
+	</select>
+</mapper>

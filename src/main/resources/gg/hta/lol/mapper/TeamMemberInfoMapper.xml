@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gg.hta.lol.mapper.TeamMemberInfoMapper">
+	<insert id="addTeamMemberInfo">
+		insert into teammemberinfo(
+		tmnum,snickname,teamId,matchId,championId,kill,death,assist,championLevel,spell1,spell2,
+		rune1,rune2,championDamage,takenDamage,cs,wardInstall,wardRemove,gold,item1,item2,item3,item4,item5,item6,accessory,multiKill
+		) 
+		select tmnum_seq.nextval, i.*
+		from(
+			<foreach collection="list" item="item" separator="union all ">
+				select
+				 #{item.snickname} as snickname,
+				#{item.teamId} as teamId,
+				#{item.matchId} as matchId,
+				#{item.championId} as championId,
+				#{item.kill} as kill,
+				#{item.death} as death,
+				#{item.assist} as assist,
+				#{item.championLevel} as championLevel,
+				#{item.spell1} as spell1,
+				#{item.spell2} as spell2,
+				#{item.rune1} as rune1,
+				#{item.rune2} as rune2,
+				#{item.championDamage} as championDamage,
+				#{item.takenDamage} as takenDamage,
+				#{item.cs} as cs,
+				#{item.wardInstall} as wardInstall,
+				#{item.wardRemove} as wardRemove,
+				#{item.gold} as gold,
+				<choose>
+					<when test="item.item1==0 or item.item1>6695">
+						null
+					</when>
+					<otherwise>
+						#{item.item1}
+					</otherwise>
+				</choose>
+				as item1
+				, 
+				<choose>
+					<when test="item.item2==0 or item.item2>6695">
+						null
+					</when>
+					<otherwise>
+						#{item.item2}
+					</otherwise>
+				</choose>
+				as item2
+				,
+				<choose>
+					<when test="item.item3==0 or item.item3>6695">
+						null
+					</when>
+					<otherwise>
+						#{item.item3}
+					</otherwise>
+				</choose>
+				as item3
+				,
+				<choose>
+					<when test="item.item4==0 or item.item4>6695">
+						null
+					</when>
+					<otherwise>
+						#{item.item4}
+					</otherwise>
+				</choose>
+				as item4
+				,
+				<choose>
+					<when test="item.item5==0 or item.item5>6695">
+						null
+					</when>
+					<otherwise>
+						#{item.item5}
+					</otherwise>
+				</choose>
+				as item5
+				,
+				<choose>
+					<when test="item.item6==0 or item.item6>6695">
+						null
+					</when>
+					<otherwise>
+						#{item.item6}
+					</otherwise>
+				</choose>
+				as item6
+				,
+				#{item.accessory} as accessory,
+				#{item.multiKill} as multiKill
+				from dual
+			</foreach>
+		)i
+	</insert>
+</mapper>

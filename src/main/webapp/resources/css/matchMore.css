@@ -1,0 +1,295 @@
+@charset "UTF-8";
+
+#mm_wrap {
+	margin-top: 15px;
+}
+
+#mm_smCard {
+	width: 100%;
+	height: 200px;
+/* 	background-color: #343a40 !important; */
+/* 	color: #F6F6F6; */
+	background-color :#e8e8e8;
+	margin-bottom: 15px;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+#mm_smLeft {
+	display: flex;
+	width: 60%;
+	height: 100%;
+	align-items: center;
+	float: left;
+}
+
+#mm_smRight {
+	display: flex;
+	width: 40%;
+	height: 100%;
+	align-items: center;
+	float: left;
+}
+
+#mm_smSoloDiv {
+	width: 40%;
+	height: 150px;
+/* 	background-color: yellow; */
+	text-align: center;
+	border: 1px solid black;
+	border-radius: 10px;
+	margin-right: 10px;
+	background-color: #e4e4e4;
+}
+
+#mm_smFlexDiv {
+	width: 40%;
+	height: 150px;
+/* 	background-color: orange; */
+	text-align: center;
+	border: 1px solid black;
+	border-radius: 10px;
+	margin-right: 10px;
+}
+
+#mm_smRatingDiv {
+	width: 40%;
+	height: 150px;
+/* 	background-color: red; */
+	align-items: center;
+	text-align: center;
+	border: 1px solid black;
+	border-radius: 10px;
+	margin-right: 10px;
+}
+
+#mm_smIconDiv {
+	position: relative;
+	width: 150px;
+	height: 150px;
+	left: 30px;
+}
+
+#smIcon {
+	width: 150px;
+	height: 150px;
+}
+
+#mm_smNicknameDiv {
+	position: relative;
+	width: 50%;
+	height: 150px;
+/* 	background-color: orange; */
+	left: 60px;
+	display: inline-block;
+	
+}
+
+#mm_homeTeam {
+	width: 50%;
+		background-color: #9ac0ff;
+	/* 	background-color: #343a40; */
+	float: left;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+.teamMember {
+	width: 100%;
+	height: 40px;
+	/* 	background-color: cadetblue; */
+/* 	border: 1px solid gray; */
+}
+
+.compareArea {
+	margin: 5px;
+	width: 49%;
+	float: left;
+	height: 350px;
+	border: 1px solid black;
+	border-radius: 10px;
+	background-color: #e8e8e8;
+/* 	background-color: #343a40 !important; */
+	margin-top: 15px;
+}
+
+/* .compare_infomation { */
+/* 	display: flex; */
+/* 	justify-content: center; */
+/* 	align-items: center; */
+/* 	margin-top: 50px; */
+/* } */
+.compare_member {
+	width: 100%;
+	height: 16%;
+/* 	border: 1px solid gray; */
+}
+
+#compare_title {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+/* 	color: #F6F6F6; */
+}
+
+.compare_barArea {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 40%;
+	height: 100%;
+/* 	border: 1px solid gray; */
+	float: left;
+}
+
+.compare_barArea .max_rage {
+	width: 80%;
+	height: 30%;
+	border: 1px solid black;
+	border-radius: 10px;
+/* 	color: #F6F6F6; */
+}
+
+.compare_champIconArea {
+	width: 10%;
+	height: 100%;
+/* 	border: 1px solid gray; */
+	float: left;
+}
+
+.compare_champIconArea img {
+	border-radius: 100%;
+}
+
+.teamAvg_child {
+	display: flex;
+	width: 25%;
+	height: 100%;
+	/* 	background-color: blue; */
+	float: left;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+}
+
+.mm_winLose {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 10%;
+	height: 100%;
+}
+
+.mm_object img {
+	width: 20px;
+	height: 20px;
+}
+
+.mm_object {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 15%;
+	height: 100%;
+}
+
+.mm_kda {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 15%;
+	height: 100%;
+}
+
+.mm_tierAvg {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 10%;
+	height: 100%;
+}
+
+.minimal {
+	display: flex;
+	width: 100%;
+	height: 20%;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	font-size: 12px;
+/* 	border: 1px solid gray; */
+}
+
+.minimal_child {
+	display: flex;
+	height: 100%;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	font-size: 12px;
+	border-top: 1px solid black;
+/* 	border : 1px solid black; */
+}
+
+#home_minimal_spellRuneArea {
+	display: inline-grid;
+	grid-template-columns: repeat(2, [ col-start ] 1fr);
+}
+
+#away_minimal_spellRuneArea {
+	display: inline-grid;
+	grid-template-columns: repeat(2, [ col-start ] 1fr);
+}
+
+.minimal_spellRune {
+	width: 100%;
+	height: 100%;
+	float: left;
+	overflow: hidden;
+}
+
+#mm_awayTeam {
+	width: 50%;
+	background-color: #ffaeae;
+	float: left;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+.star_rating {
+	font-size:0; 
+	letter-spacing:-4px;
+}
+.star_rating a {
+    font-size:22px;
+    letter-spacing:0;
+    display:inline-block;
+    margin-left:5px;
+    color:gray;
+    text-decoration:none;
+}
+.star_rating a:first-child {
+	margin-left:0;
+}
+.star_rating a.on {
+	color:yellow;
+}
+
+.nicknameArea_child {
+	width: 100%;
+	height: 50%;
+}
+
+.matchScore {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50%;
+	height: 80%;
+	border: 1px solid black;
+	border-radius: 10px;
+	margin: 5px;
+	font-size: 16px;
+	font-weight: bold;
+/* 	background-color: #e8e8e8; */
+}

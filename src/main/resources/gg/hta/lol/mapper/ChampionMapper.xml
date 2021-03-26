@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gg.hta.lol.mapper.ChampionMapper">
+	<insert id="addChampion">
+		insert into champion values(
+		#{championid},
+		#{name},
+		0,
+		0,
+		0,
+		0,
+		#{picture},
+		#{skillP_icon},
+		#{skillP_info},
+		#{skillQ_icon},
+		#{skillQ_info},
+		#{skillW_icon},
+		#{skillW_info},
+		#{skillE_icon},
+		#{skillE_info},
+		#{skillR_icon},
+		#{skillR_info},
+		#{story},
+		#{tip}
+		)
+	</insert>
+	
+	<delete id="deleteAllChampion">
+		delete from Champion
+	</delete>
+	
+	<select id="getChampionPicture" parameterType="String" resultType="String">
+		select picture
+		from champion
+		where championid = #{championid}
+	</select>
+	
+	<update id="updateWin">
+	    update champion
+	    set wincount = wincount+1, pickcount = pickcount+1
+	    where championid in(
+	    select championid 
+	    from teaminfo ti, teammemberinfo tm
+	    where ti.matchid=tm.matchid
+	     and ti.teamid = tm.teamid
+	    	<foreach collection="list" item="item" open=" and tm.matchid  in(" close=")" separator=",">
+		   		#{item}
+		   	</foreach>
+	    and winlose = 'Win'
+    )
+    </update>
+    
+    <update id="updateLose">
+	    update champion
+	     set losecount = losecount+1, pickcount = pickcount+1
+	    where championid in
+	    (
+		    select championid 
+		    from teaminfo ti, teammemberinfo tm
+		    where ti.matchid=tm.matchid
+		     and ti.teamid = tm.teamid
+		   	<foreach collection="list" item="item" open=" and tm.matchid  in(" close=")" separator=",">
+		   		#{item}
+		   	</foreach>
+		    and winlose = 'Fail'
+  	  	)
+	</update>
+	
+	 <update id="updateBan">
+	 	<foreach collection="list" item="item" index="index" separator=";" open="DECLARE BEGIN" close="; END;">
+	 		update champion
+			set bancount= bancount+1
+			where championid = #{item}
+	 	</foreach>
+	</update>
+</mapper>
