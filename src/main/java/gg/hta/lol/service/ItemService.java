@@ -35,5 +35,17 @@ public class ItemService {
 	public List<HashMap<String, Object>> sortPopItemByTag (String tag) {
 		return dao.sortPopItemByTag(tag);
 	}
+
+    public List<HashMap<String, Integer>> getAllItemPrice(HashMap<String, Object> map) {
+	    return dao.getAllItemPrice(map);
+	};
+
+	public int getHaveItemWinloseCount(HashMap<String, Object> map) {
+		return dao.getHaveItemWinloseCount(map);
+	}
+
+	public HashMap<String, Double> getKdaAvg(HashMap<String, String> map) {
+		return dao.getKdaAvg(map);
+	}
 	
 }

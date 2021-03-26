@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -22,34 +23,67 @@ import java.util.*;
 public class Test {
 
     @Autowired
-    ChampService service;
+    ItemService service;
 
     @org.junit.Test
     public void test() {
 
-        /*HashMap<String, List> rankerItemListMap = new HashMap<>();
-        HashMap<String, Object> rankerItemListPram = new HashMap<>();
-        List<HashMap<String, Object>> championRankMap = service.getChampionRank(79);
-        rankerItemListPram.put("championid", 79);
-        rankerItemListPram.put("snickname", "더덕순대국");
-        rankerItemListMap.put("더덕순대국", service.getChampionRankerItemList(rankerItemListPram));
+        int minPrice = 1;
+        int maxPrice = 5000;
+        String tag = "Active";
 
-        for (int a : service.getChampionRankerItemList(rankerItemListPram)) {
-            System.out.println(a);
-        }*/
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("minPrice", minPrice);
+        map.put("maxPrice", maxPrice);
+        map.put("tag", tag);
 
-        /*System.out.println(rankerItemListMap);*/
+        List<HashMap<String, Integer>> itemList = service.getAllItemPrice(map);
 
-       /* for (int i=0; i<3; i++) {
+        HashMap<Object, Integer> resultMap = new HashMap<>();
 
-            List<HashMap<String, Object>> championRankMap = service.getChampionRank(79);
-            HashMap<String, Object> rankerItemListPram = new HashMap<>();
-            rankerItemListPram.put("championid", 79);
-            rankerItemListPram.put("snickname", championRankMap.get(i).get("SNICKNAME"));
+        for (HashMap<String, Integer> m : itemList) {
+            // 가격, 태그 조건맞는 아이템 목록 가져온 상태
+            String[] col = {"ITEM1", "ITEM2", "ITEM3", "ITEM4", "ITEM5", "ITEM6"};
 
-            rankerItemListMap.put(championRankMap.get(i).get("SNICKNAME") + "", service.getChampionRankerItemList(rankerItemListPram));
+            HashMap<String, Object> paramMap = new HashMap<>();
 
-            System.out.println(rankerItemListMap);
-        }*/
+            int winCount = 0;
+            int loseCount = 0;
+
+            paramMap.put("inum", m.get("INUM"));
+
+            // 승리횟수 구하기
+            paramMap.put("winlose", "Win");
+            for (String colName : col) {
+                paramMap.put("col", colName);
+                winCount += service.getHaveItemWinloseCount(paramMap);
+            }
+
+            // 패배횟수 구하기
+            paramMap.put("winlose", "Fail");
+            for (String colName : col) {
+                paramMap.put("col", colName);
+                loseCount += service.getHaveItemWinloseCount(paramMap);
+            }
+
+            ArrayList<Integer> list = new ArrayList<>();
+            list.add(winCount);
+            list.add(loseCount);
+            System.out.println(list);
+            int rating = winCount * 100 / (winCount + loseCount);
+
+            resultMap.put(m.get("INUM"), rating);
+        }
+
+        List<Object> keySetList = new ArrayList<>(resultMap.keySet());
+
+        Collections.sort(keySetList, (o1, o2) -> (resultMap.get(o2).compareTo(resultMap.get(o1))));
+
+        LinkedHashMap<Object, Object> finalResultMap = new LinkedHashMap<>();
+        for(Object key : keySetList) {
+            finalResultMap.put(key, resultMap.get(key));
+        }
+
+        System.out.println(finalResultMap);
     }
 }

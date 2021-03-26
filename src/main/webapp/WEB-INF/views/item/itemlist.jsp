@@ -54,6 +54,10 @@
         .sortResultDiv {
             background: #ffffff;
         }
+
+        #winloseRateDiv {
+            color: #ffffff;
+        }
     </style>
     <meta charset="UTF-8">
     <title>Insert title here</title>
@@ -116,7 +120,6 @@
         });
 
         function iteminfoinfo(inum) {
-            console.log(event.clientX);
             var x = event.clientX;
             var y = event.clientY;
             $.ajax({
@@ -129,10 +132,18 @@
                     /*$("#iteminfo").text((data.effect));*/
                     /*$(data.effect).appendTo("#iteminfo");*/
                     var nameeffect = "<div><h2>" + data.name + "</h2><p>가격:" + data.price + "<br><img src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + data.icon + " style='width:64px;'><br>" + data.effect + "</div>";
+
                     $("#effect").empty();
                     $(nameeffect).appendTo("#info").addClass('content');
 
                     //ddd
+                }
+            })
+
+            $.get({
+                url: '/getKdaAvg?inum=' + inum,
+                success: function (data) {
+                    console.log(data.getElementsByTagName("doubles")[0].getElementsByTagName("item")[0]);
                 }
             })
         }
@@ -156,45 +167,40 @@
                 태그별
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-				<a class="dropdown-item" href="#" onclick="sortItemBestByTag('Active')">특수효과</a>
-				<a class="dropdown-item" href="#" onclick="sortItemBestByTag('SpellDamage')">마법공격</a>
-				<a class="dropdown-item" href="#" onclick="sortItemBestByTag('Damage')">물리공격</a>
-				<a class="dropdown-item" href="#" onclick="sortItemBestByTag('AttackSpeed')">공속/치명</a>
-				<a class="dropdown-item" href="#" onclick="sortItemBestByTag('Armor')">방어특화</a>
-				<a class="dropdown-item" href="#" onclick="sortItemBestByTag('Boots')">이동속도</a>
+                <a class="dropdown-item" href="#" onclick="sortItemBestByTag('Active')">특수효과</a>
+                <a class="dropdown-item" href="#" onclick="sortItemBestByTag('SpellDamage')">마법공격</a>
+                <a class="dropdown-item" href="#" onclick="sortItemBestByTag('Damage')">물리공격</a>
+                <a class="dropdown-item" href="#" onclick="sortItemBestByTag('AttackSpeed')">공속/치명</a>
+                <a class="dropdown-item" href="#" onclick="sortItemBestByTag('Armor')">방어특화</a>
+                <a class="dropdown-item" href="#" onclick="sortItemBestByTag('Boots')">이동속도</a>
             </div>
         </div>
     </div>
     <div id="popSort_resultDiv" class="sortResultDiv">
-		<div id="popSort_searchDiv"></div>
-		<div id="popSort_itemList"></div>
+        <div id="popSort_searchDiv"></div>
+        <div id="popSort_itemList"></div>
     </div>
     <br>
 
     <h1>고승률 아이템</h1>
-    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-        <button type="button" class="btn btn-secondary">전체</button>
-        <button type="button" class="btn btn-secondary">가격별</button>
-
-        <div class="btn-group" role="group">
-            <button id="btnGroupDrop2" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                태그별
-            </button>
-            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-				<a class="dropdown-item" href="#">특수효과</a>
-				<a class="dropdown-item" href="#">마법공격</a>
-				<a class="dropdown-item" href="#">물리공격</a>
-				<a class="dropdown-item" href="#">공속/치명</a>
-				<a class="dropdown-item" href="#">방어특화</a>
-				<a class="dropdown-item" href="#">이동속도</a>
-            </div>
-        </div>
+    <div id="winloseRateDiv">
+        <input type="checkbox" id="priceCheckbox">
+        가격 : <input type="number" id="minPrice" min="1" max="4000" step="1" value="0" disabled="disabled"> ~
+        <input type="number" id="maxPrice" min="1" max="4000" step="1" value="0" disabled="disabled">
+        <br>
+        <label for="tag">분류 :</label><select id="tag">
+            <option value="0" selected="selected">선택</option>
+            <option value="Active">특수효과</option>
+            <option value="SpellDamage">마법공격</option>
+            <option value="Damage">물리공격</option>
+            <option value="AttackSpeed">공속/치명</option>
+            <option value="Armor">방어특화</option>
+            <option value="Boots">이동속도</option>
+        </select>
+        <br>
+        <input type="button" id="sortBtn" value="검색" style="width: 250px; height: 50px;">
     </div>
-    <br>
-
     <div id="sort_resultDiv" class="sortResultDiv">
-        안녕하세요 이희권입니다
     </div>
     <div id="start"><h1>스타팅추천</h1></div>
     <div id="actives"><h1>특수사용효과</h1></div>
@@ -214,26 +220,26 @@
 </body>
 <script>
 
-	$("#sortPopByAll").click(function (e) {
-		$.get({
-			url: '/sortItemBestByAll',
-			success: function (data) {
+    $("#sortPopByAll").click(function (e) {
+        $.get({
+            url: '/sortItemBestByAll',
+            success: function (data) {
 
-				$("#popSort_itemList").empty();
-				$("#popSort_searchDiv").empty();
+                $("#popSort_itemList").empty();
+                $("#popSort_searchDiv").empty();
 
-				for (let i=0; i<12; i++) {
-					let imgNum = data.getElementsByTagName('item')[i].getElementsByTagName('ITEM')[0].innerHTML;
-					let imgName = imgNum + '.png';
-					$("#popSort_itemList").append("<img src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + imgName + " style='width:60px; height: 60px;' onmouseover='iteminfoinfo(" + imgNum + ")' onmouseout='iteminfo2()'>");
-				}
-			}
-		})
-	});
+                for (let i = 0; i < 12; i++) {
+                    let imgNum = data.getElementsByTagName('item')[i].getElementsByTagName('ITEM')[0].innerHTML;
+                    let imgName = imgNum + '.png';
+                    $("#popSort_itemList").append("<img src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + imgName + " style='width:60px; height: 60px;' onmouseover='iteminfoinfo(" + imgNum + ")' onmouseout='iteminfo2()'>");
+                }
+            }
+        })
+    });
 
     $("#sortPopByPrice").click(function (e) {
 
-		$("#popSort_searchDiv").empty();
+        $("#popSort_searchDiv").empty();
 
         /*$("#popSort_resultDiv").empty();*/
         let input = "<input type='text' value='1' id='pop_minPrice'>~" +
@@ -242,42 +248,80 @@
         $("#popSort_searchDiv").append(input);
 
 
-		$("#pop_searchBtn").click(function (e) {
+        $("#pop_searchBtn").click(function (e) {
 
-			const minPrice = $("#pop_minPrice").val();
-			const maxPrice = $("#pop_maxPrice").val();
+            const minPrice = $("#pop_minPrice").val();
+            const maxPrice = $("#pop_maxPrice").val();
 
-			$.get({
-				url: '/sortItemBestByPrice?minPrice=' + minPrice + '&maxPrice=' + maxPrice,
-				success: function (data) {
+            $.get({
+                url: '/sortItemBestByPrice?minPrice=' + minPrice + '&maxPrice=' + maxPrice,
+                success: function (data) {
 
-					$("#popSort_itemList").empty();
+                    $("#popSort_itemList").empty();
 
-					for (let i=0; i<12; i++) {
-						let imgNum = data.getElementsByTagName('item')[i].getElementsByTagName('ITEM')[0].innerHTML;
-						let imgName = imgNum + '.png';
-						$("#popSort_itemList").append("<img src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + imgName + " style='width:60px; height: 60px;' onmouseover='iteminfoinfo(" + imgNum + ")' onmouseout='iteminfo2()'>");
-					}
-				}
-			})
-		})
-	});
+                    for (let i = 0; i < 12; i++) {
+                        let imgNum = data.getElementsByTagName('item')[i].getElementsByTagName('ITEM')[0].innerHTML;
+                        let imgName = imgNum + '.png';
+                        $("#popSort_itemList").append("<img src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + imgName + " style='width:60px; height: 60px;' onmouseover='iteminfoinfo(" + imgNum + ")' onmouseout='iteminfo2()'>");
+                    }
+                }
+            })
+        })
+    });
 
     function sortItemBestByTag(tag) {
-		$.get({
-			url: '/sortItemBestByTag?tag=' + tag,
-			success: function (data) {
+        $.get({
+            url: '/sortItemBestByTag?tag=' + tag,
+            success: function (data) {
                 console.log();
-				$("#popSort_itemList").empty();
-				$("#popSort_searchDiv").empty();
+                $("#popSort_itemList").empty();
+                $("#popSort_searchDiv").empty();
 
-				for (let i=0; i<12; i++) {
-					let imgNum = data.getElementsByTagName('item')[i].getElementsByTagName('ITEM')[0].innerHTML;
-					let imgName = imgNum + '.png';
-					$("#popSort_itemList").append("<img src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + imgName + " style='width:60px; height: 60px;' onmouseover='iteminfoinfo(" + imgNum + ")' onmouseout='iteminfo2()'>");
-				}
-			}
-		})
-	}
+                for (let i = 0; i < 12; i++) {
+                    let imgNum = data.getElementsByTagName('item')[i].getElementsByTagName('ITEM')[0].innerHTML;
+                    let imgName = imgNum + '.png';
+                    $("#popSort_itemList").append("<img src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + imgName + " style='width:60px; height: 60px;' onmouseover='iteminfoinfo(" + imgNum + ")' onmouseout='iteminfo2()'>");
+                }
+            }
+        })
+    }
+
+    $("#priceCheckbox").change(function (e) {
+
+        if ($("#priceCheckbox").prop('checked')) {
+            $("#minPrice").val("1");
+            $("#maxPrice").val("4000");
+            $("#minPrice").attr('disabled', false);
+            $("#maxPrice").attr('disabled', false);
+        } else {
+            $("#minPrice").val("0");
+            $("#maxPrice").val("0");
+            $("#minPrice").attr('disabled', true);
+            $("#maxPrice").attr('disabled', true);
+        }
+    });
+    
+    $("#sortBtn").click(function () {
+        var minPrice = $("#minPrice").val();
+        var maxPrice = $("#maxPrice").val();
+        var tag = $("#tag").val();
+
+
+        console.log(tag);
+
+        $.get({
+            url: '/sortItemBestByRating?minPrice=' + minPrice + '&maxPrice=' + maxPrice + '&tag=' + tag,
+            dataType: 'json',
+            success: function (data) {
+                $("#sort_resultDiv").empty();
+                for (let i=0; i<data.length; i++) {
+                    let imgName = data[i][0] + '.png';
+                    let tooltip = '[' + (parseInt(i)+1) + '위]' + data[i][1] + '%';
+                    console.log(tooltip)
+                    $("#sort_resultDiv").append("<img title=" + tooltip + " src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + imgName + " style='width:60px; height: 60px;' onmouseover='iteminfoinfo(" + data[i][0] + ")' onmouseout='iteminfo2()'>");
+                }
+            }
+        })
+    })
 </script>
 </html>

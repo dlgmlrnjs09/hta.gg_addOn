@@ -35,4 +35,16 @@ public class ItemDao {
 	public List<HashMap<String, Object>> sortPopItemByTag (String tag) {
 		return sqlSession.selectList(NAMESPACE + ".sortPopItemByTag", tag);
 	}
+
+	public List<HashMap<String, Integer>> getAllItemPrice(HashMap<String, Object> map) {
+	    return sqlSession.selectList(NAMESPACE + ".getAllItemPrice", map);
+    }
+
+    public int getHaveItemWinloseCount(HashMap<String, Object> map) {
+		return sqlSession.selectOne(NAMESPACE + ".getHaveItemWinloseCount", map);
+	}
+
+	public HashMap<String, Double> getKdaAvg(HashMap<String, String> map) {
+		return sqlSession.selectOne(NAMESPACE + ".getKdaAvg", map);
+	}
 }

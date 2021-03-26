@@ -28,90 +28,146 @@
     </select>
 
     <select id="sortPopItemByAll" resultType="hashmap">
-        SELECT
-            ITEm, COUNT(*) AS CNT, i.price
-        FROM
-            (
-                SELECT ITEM1 AS ITEM FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM2 as item FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM3 as item FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM4 as item FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM5 as item FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM6 as item FROM teammemberinfo
-            ) A, item i
-        where
-            not item is null
+        SELECT ITEm,
+               COUNT(*) AS CNT,
+               i.price
+        FROM (
+                 SELECT ITEM1 AS ITEM
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM2 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM3 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM4 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM5 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM6 as item
+                 FROM teammemberinfo
+             ) A,
+             item i
+        where not item is null
         <![CDATA[
           and i.inum = a.item
         ]]>
-      GROUP BY
-            ITEM, i.price
-        ORDER BY
-            CNT DESC
+      GROUP BY ITEM, i.price
+        ORDER BY CNT DESC
     </select>
 
     <select id="sortPopItemByPrice" parameterType="hashmap" resultType="hashmap">
-      SELECT
-        ITEm, COUNT(*) AS CNT, i.price
-      FROM
-        (
-          SELECT ITEM1 AS ITEM FROM teammemberinfo
-          UNION ALL
-          SELECT ITEM2 as item FROM teammemberinfo
-          UNION ALL
-          SELECT ITEM3 as item FROM teammemberinfo
-          UNION ALL
-          SELECT ITEM4 as item FROM teammemberinfo
-          UNION ALL
-          SELECT ITEM5 as item FROM teammemberinfo
-          UNION ALL
-          SELECT ITEM6 as item FROM teammemberinfo
-        ) A, item i
-      where
-        not item is null
+        SELECT ITEm,
+               COUNT(*) AS CNT,
+               i.price
+        FROM (
+                 SELECT ITEM1 AS ITEM
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM2 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM3 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM4 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM5 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM6 as item
+                 FROM teammemberinfo
+             ) A,
+             item i
+        where not item is null
         <![CDATA[
-        and i.inum = a.item
-        and i.price >= #{minPrice}
-        and i.price <= #{maxPrice}
+          and i.inum = a.item
+          and i.price >= #{minPrice}
+          and i.price <= #{maxPrice}
         ]]>
-      GROUP BY
-        ITEM, i.price
-      ORDER BY
-        CNT DESC
+      GROUP BY ITEM, i.price
+        ORDER BY CNT DESC
     </select>
 
     <select id="sortPopItemByTag" parameterType="String" resultType="hashmap">
-        SELECT
-            ITEm, COUNT(*) AS CNT, i.price
-        FROM
-            (
-                SELECT ITEM1 AS ITEM FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM2 as item FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM3 as item FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM4 as item FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM5 as item FROM teammemberinfo
-                UNION ALL
-                SELECT ITEM6 as item FROM teammemberinfo
-            ) A, item i
-        where
-            not item is null
+        SELECT ITEm,
+               COUNT(*) AS CNT,
+               i.price
+        FROM (
+                 SELECT ITEM1 AS ITEM
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM2 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM3 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM4 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM5 as item
+                 FROM teammemberinfo
+                 UNION ALL
+                 SELECT ITEM6 as item
+                 FROM teammemberinfo
+             ) A,
+             item i
+        where not item is null
         <![CDATA[
           and i.inum = a.item
           and tags = #{tag}
         ]]>
-      GROUP BY
-            ITEM, i.price
-      ORDER BY
-            CNT DESC
+      GROUP BY ITEM, i.price
+        ORDER BY CNT DESC
+    </select>
+
+    <select id="getAllItemPrice" parameterType="hashmap" resultType="hashmap">
+        select
+            *
+        from
+            item
+        where
+            not inum is null
+            <if test="minPrice > 0 and maxPrice > 0">
+            <![CDATA[
+            and price >= #{minPrice}
+            and price <= #{maxPrice}
+            ]]>
+            </if>
+        <if test='tag != "0"'>
+            <![CDATA[
+            and tags = #{tag}
+            ]]>
+        </if>
+    </select>
+
+    <select id="getHaveItemWinloseCount" parameterType="hashmap" resultType="int">
+        select
+            count(*)
+        from
+            teammemberinfo tm,
+             teaminfo ti
+        where
+            tm.teamid = ti.teamid and
+            tm.MATCHID = ti.MATCHID and
+            ti.WINLOSE = #{winlose} and
+            ${col} = #{inum}
+    </select>
+
+    <select id="getKdaAvg" parameterType="hashmap" resultType="hashmap">
+        SELECT
+            ROUND(AVG(KILL), 1) as kill,
+            ROUND(AVG(DEATH), 1) as death,
+            ROUND(AVG(ASSIST), 1) as assist
+        FROM
+            TEAMMEMBERINFO
+        WHERE
+            ${col} = #{inum}
     </select>
 </mapper>
   
