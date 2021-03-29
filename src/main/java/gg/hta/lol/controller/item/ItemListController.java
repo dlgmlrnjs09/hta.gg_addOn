@@ -1,8 +1,12 @@
 package gg.hta.lol.controller.item;
 
+import java.lang.reflect.Array;
+import java.text.DecimalFormat;
 import java.util.*;
 
+import com.github.scribejava.core.utils.MapUtils;
 import com.sun.istack.Nullable;
+import gg.hta.lol.vo.useItemCountVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
@@ -145,12 +149,47 @@ public class ItemListController {
         for (String colName : col) {
             paramMap.put("col", colName);
             HashMap<String, Double> resultMap = service.getKdaAvg(paramMap);
-            killAvg += Double.parseDouble(String.valueOf(resultMap.get("KILL")));
-            deathAvg += Double.parseDouble(String.valueOf(resultMap.get("DEATH")));
-            assistAvg += Double.parseDouble(String.valueOf(resultMap.get("ASSIST")));
+            if (resultMap != null) {
+                killAvg += Double.parseDouble(String.valueOf(resultMap.get("KILL")));
+                deathAvg += Double.parseDouble(String.valueOf(resultMap.get("DEATH")));
+                assistAvg += Double.parseDouble(String.valueOf(resultMap.get("ASSIST")));
+            }
         }
 
-        return new double[]{killAvg/5, deathAvg/5, assistAvg/5};
+        return new double[]{Math.round((killAvg/5) * 100)/100.0, Math.round((deathAvg/5) * 100)/100.0, Math.round((assistAvg/5) * 100)/100.0};
+    }
+
+    @GetMapping(value = "/getUseItemCountByChampion")
+    @ResponseBody
+    public ArrayList<HashMap<String, Integer>> getUseItemCountByChampion(int inum) {
+        List<useItemCountVo> list = service.useItemCountByChampion(inum);
+        HashMap<String, Integer> resultMap = new HashMap<>();
+
+        for (useItemCountVo item : list) {
+
+            item.setChampionId(service.getPictureName(item.getChampionId()));
+
+            String championId = item.getChampionId();
+            int cnt = item.getCnt();
+
+            if (!resultMap.containsKey(championId)) {
+                resultMap.put(championId, item.getCnt());
+            } else {
+                resultMap.put(championId, resultMap.get(championId) + cnt);
+            }
+        }
+
+        List<String> keySetList = new ArrayList<>(resultMap.keySet());
+        ArrayList<HashMap<String, Integer>> resultList = new ArrayList<>();
+
+        Collections.sort(keySetList, (o1, o2) -> (resultMap.get(o2).compareTo(resultMap.get(o1))));
+        for(String key : keySetList) {
+            HashMap<String, Integer> map = new HashMap<>();
+            map.put(key, resultMap.get(key));
+            resultList.add(map);
+        }
+
+        return resultList;
     }
 }
 	

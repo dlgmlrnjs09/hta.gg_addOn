@@ -14,6 +14,15 @@
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
 	<dependencies>
+
+		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>3.141.59</version>
+		</dependency>
+
+
 		<!-- ///////////////////// naver로그인(소셜로그인) ////////////////////////// -->
 		<dependency>
 			<groupId>com.github.scribejava</groupId>

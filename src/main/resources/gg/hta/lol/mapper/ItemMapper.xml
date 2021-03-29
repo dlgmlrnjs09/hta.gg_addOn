@@ -169,5 +169,98 @@
         WHERE
             ${col} = #{inum}
     </select>
+
+    <select id="useItemCountByChampion" parameterType="int" resultType="gg.hta.lol.vo.useItemCountVo">
+        select
+            tm.championid ,count(championid) CNT
+        from
+            teammemberinfo tm,
+            teaminfo ti
+        where
+            tm.teamid = ti.teamid and
+            tm.MATCHID = ti.MATCHID and
+            item1 = #{inum}
+        group by
+            tm.championid
+
+        union
+
+        select
+            tm.championid ,count(championid) CNT
+        from
+            teammemberinfo tm,
+            teaminfo ti
+        where
+            tm.teamid = ti.teamid and
+            tm.MATCHID = ti.MATCHID and
+            item2 = #{inum}
+        group by
+            tm.championid
+
+        union
+
+        select
+            tm.championid ,count(championid)
+        from
+            teammemberinfo tm,
+            teaminfo ti
+        where
+            tm.teamid = ti.teamid and
+            tm.MATCHID = ti.MATCHID and
+            item3 = #{inum}
+        group by
+            tm.championid
+
+        union
+
+        select
+            tm.championid ,count(championid)
+        from
+            teammemberinfo tm,
+            teaminfo ti
+        where
+            tm.teamid = ti.teamid and
+            tm.MATCHID = ti.MATCHID and
+            item4 = #{inum}
+        group by
+            tm.championid
+
+        union
+
+        select
+            tm.championid ,count(championid)
+        from
+            teammemberinfo tm,
+            teaminfo ti
+        where
+            tm.teamid = ti.teamid and
+            tm.MATCHID = ti.MATCHID and
+            item5 = #{inum}
+        group by
+            tm.championid
+
+        union
+
+        select
+            tm.championid ,count(championid)
+        from
+            teammemberinfo tm,
+            teaminfo ti
+        where
+            tm.teamid = ti.teamid and
+            tm.MATCHID = ti.MATCHID and
+            item6 = #{inum}
+        group by
+            tm.championid
+    </select>
+
+    <select id="getPictureName" parameterType="String" resultType="String">
+        select
+            picture
+        from
+            CHAMPION
+        where
+            CHAMPIONID = #{championid}
+    </select>
 </mapper>
   

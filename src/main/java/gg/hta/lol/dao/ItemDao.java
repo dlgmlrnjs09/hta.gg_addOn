@@ -3,6 +3,7 @@ package gg.hta.lol.dao;
 import java.util.HashMap;
 import java.util.List;
 
+import gg.hta.lol.vo.useItemCountVo;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -46,5 +47,13 @@ public class ItemDao {
 
 	public HashMap<String, Double> getKdaAvg(HashMap<String, String> map) {
 		return sqlSession.selectOne(NAMESPACE + ".getKdaAvg", map);
+	}
+
+	public List<useItemCountVo> useItemCountByChampion(int inum) {
+		return sqlSession.selectList(NAMESPACE + ".useItemCountByChampion", inum);
+	}
+
+	public String getPictureName(String championid) {
+		return sqlSession.selectOne(NAMESPACE + ".getPictureName", championid);
 	}
 }

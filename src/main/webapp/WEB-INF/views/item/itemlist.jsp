@@ -119,31 +119,65 @@
 
         });
 
+        var killAvg = 0;
+        var deathAvg = 0;
+        var assistAvg = 0;
+        var kda = 0;
+
+        var img = "";
+
         function iteminfoinfo(inum) {
             var x = event.clientX;
             var y = event.clientY;
+
+            $.get({
+                url: '/getKdaAvg?inum=' + inum,
+                success: function (data) {
+                    killAvg = parseFloat(data.getElementsByTagName("doubles")[0].getElementsByTagName("item")[0].innerHTML);
+                    deathAvg = parseFloat(data.getElementsByTagName("doubles")[0].getElementsByTagName("item")[1].innerHTML);
+                    assistAvg = parseFloat(data.getElementsByTagName("doubles")[0].getElementsByTagName("item")[2].innerHTML);
+                    kda = (killAvg + deathAvg) / deathAvg
+                    kda = kda.toFixed(2);
+                }
+            });
+
+            $.get({
+                url: '/getUseItemCountByChampion?inum=' + inum,
+                success: function (data) {
+
+                    img = "<br>이 아이템을 가장 많이 사용한 챔피언 TOP 5<br>";
+
+                    for (let i=0; i<5; i++) {
+                        img += "<img style='width=75px; height: 75px;' src='http://ddragon.leagueoflegends.com/cdn/11.3.1/img/champion/" + Object.keys(data[i]) +"'>";
+                    }
+                    /*console.log(img)*/
+                },
+                dataType: 'json',
+                async: false
+            });
+
             $.ajax({
                 contentType: 'application/json',
                 url: "/iteminfo?inum=" + inum,
                 dataType: 'json',
                 success: function (data) {
 
+                    var msg = "";
 
-                    /*$("#iteminfo").text((data.effect));*/
-                    /*$(data.effect).appendTo("#iteminfo");*/
-                    var nameeffect = "<div><h2>" + data.name + "</h2><p>가격:" + data.price + "<br><img src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + data.icon + " style='width:64px;'><br>" + data.effect + "</div>";
+                    if (!isNaN(kda)) {
+                        msg = "이 아이템을 사용한 챔피언의 평균 KDA : <span style='color: red; font-weight: bold'>" + kda + " [" + killAvg + "/" + deathAvg + "/" + assistAvg + "]</span>"
+                    }
+
+                    console.log(img)
+                    var nameeffect = "<div><h2>" + data.name + "</h2><p>가격:" + data.price + "<br><img src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + data.icon + " style='width:64px;'><br>" + data.effect + "<br>" + msg + "<br>" + img + "</div>";
 
                     $("#effect").empty();
                     $(nameeffect).appendTo("#info").addClass('content');
 
-                    //ddd
-                }
-            })
-
-            $.get({
-                url: '/getKdaAvg?inum=' + inum,
-                success: function (data) {
-                    console.log(data.getElementsByTagName("doubles")[0].getElementsByTagName("item")[0]);
+                    killAvg = 0;
+                    deathAvg = 0;
+                    assistAvg = 0;
+                    kda = 0;
                 }
             })
         }
@@ -273,7 +307,6 @@
         $.get({
             url: '/sortItemBestByTag?tag=' + tag,
             success: function (data) {
-                console.log();
                 $("#popSort_itemList").empty();
                 $("#popSort_searchDiv").empty();
 
@@ -317,7 +350,7 @@
                 for (let i=0; i<data.length; i++) {
                     let imgName = data[i][0] + '.png';
                     let tooltip = '[' + (parseInt(i)+1) + '위]' + data[i][1] + '%';
-                    console.log(tooltip)
+                    console.log(tooltip);
                     $("#sort_resultDiv").append("<img title=" + tooltip + " src=http://ddragon.leagueoflegends.com/cdn/11.2.1/img/item/" + imgName + " style='width:60px; height: 60px;' onmouseover='iteminfoinfo(" + data[i][0] + ")' onmouseout='iteminfo2()'>");
                 }
             }

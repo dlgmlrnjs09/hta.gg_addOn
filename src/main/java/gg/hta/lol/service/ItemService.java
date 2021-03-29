@@ -3,6 +3,7 @@ package gg.hta.lol.service;
 import java.util.HashMap;
 import java.util.List;
 
+import gg.hta.lol.vo.useItemCountVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,14 @@ public class ItemService {
 
 	public HashMap<String, Double> getKdaAvg(HashMap<String, String> map) {
 		return dao.getKdaAvg(map);
+	}
+
+	public List<useItemCountVo> useItemCountByChampion(int inum) {
+		return dao.useItemCountByChampion(inum);
+	}
+
+	public String getPictureName(String championid) {
+		return dao.getPictureName(championid);
 	}
 	
 }
